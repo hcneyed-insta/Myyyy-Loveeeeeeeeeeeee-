@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For My Forever 💍</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #1a1a1a 0%, #4a0e0e 100%);
+            --accent: #ff4d6d;
+            --glass: rgba(255, 255, 255, 0.1);
+        }
+
+        body, html {
+            margin: 0; padding: 0; height: 100%;
+            background: var(--bg-gradient);
+            color: white;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            overflow: hidden;
+            display: flex; justify-content: center; align-items: center;
+        }
+
+        #canvas-bg {
+            position: fixed; top: 0; left: 0; z-index: 1; pointer-events: none;
+        }
+
+        .container {
+            position: relative; z-index: 10;
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 3rem;
+            border-radius: 30px;
+            text-align: center;
+            max-width: 500px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+            animation: floatCard 6s ease-in-out infinite;
+        }
+
+        @keyframes floatCard {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        h1 { font-size: 2.5rem; margin-bottom: 0.5rem; letter-spacing: -1px; }
+        
+        #typewriter {
+            font-size: 1.2rem;
+            height: 1.5em;
+            color: var(--accent);
+            font-weight: 300;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 2rem 0;
+        }
+
+        .stat-card {
+            background: rgba(0,0,0,0.2);
+            padding: 15px;
+            border-radius: 15px;
+        }
+
+        .stat-card span { display: block; font-size: 1.5rem; font-weight: bold; color: var(--accent); }
+        .stat-card label { font-size: 0.7rem; text-transform: uppercase; opacity: 0.7; }
+
+        .btn-main {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 18px 40px;
+            border-radius: 50px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 10px 20px rgba(255, 77, 109, 0.4);
+        }
+
+        .btn-main:hover {
+            transform: scale(1.05) rotate(-2deg);
+            background: #ff758f;
+        }
+
+        /* The "Intrusive" Overlay */
+        #love-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #ff4d6d;
+            z-index: 100;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="canvas-bg"></canvas>
+
+    <div class="container">
+        <h1>Hi, Sanvi ❤️</h1>
+        <div id="typewriter"></div>
+
+        <div class="stats-grid">
+            <div class="stat-card"><span id="days">165</span><label>Days Together</label></div>
+            <div class="stat-card"><span id="memories">∞</span><label>Memories</label></div>
+            <div class="stat-card"><span>1</span><label>Only You</label></div>
+        </div>
+
+        <button class="btn-main" onclick="triggerLove()">DON'T CLICK THIS</button>
+    </div>
+
+    <div id="love-overlay">
+        <h1 style="font-size: 5rem;">I LOVE YOU</h1>
+        <p style="font-size: 1.5rem;">There is no escaping my love for you today.</p>
+        <button class="btn-main" style="background: white; color: var(--accent);" onclick="closeOverlay()">Okay, I get it!</button>
+    </div>
+
+    <script>
+        // Typewriter Effect
+        const text = "You're the best thing that ever happened to me...";
+        let i = 0;
+        function type() {
+            if (i < text.length) {
+                document.getElementById("typewriter").innerHTML += text.charAt(i);
+                i++;
+                setTimeout(type, 100);
+            }
+        }
+        window.onload = type;
+
+        // Background Animation (Floating Particles)
+        const canvas = document.getElementById('canvas-bg');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let hearts = [];
+        function createParticle() {
+            return {
+                x: Math.random() * canvas.width,
+                y: canvas.height + 10,
+                size: Math.random() * 15 + 5,
+                speed: Math.random() * 2 + 1,
+                opacity: Math.random() * 0.5 + 0.2
+            };
+        }
+
+        function drawParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            hearts.forEach((h, index) => {
+                h.y -= h.speed;
+                ctx.fillStyle = `rgba(255, 77, 109, ${h.opacity})`;
+                ctx.font = `${h.size}px serif`;
+                ctx.fillText('❤️', h.x, h.y);
+                if (h.y < -20) hearts[index] = createParticle();
+            });
+            requestAnimationFrame(drawParticles);
+        }
+
+        for(let j=0; j<30; j++) hearts.push(createParticle());
+        drawParticles();
+
+        // The "Intrusive" Action
+        function triggerLove() {
+            confetti({
+                particleCount: 200,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: ['#ff4d6d', '#ffffff', '#ff758f']
+            });
+            
+            setTimeout(() => {
+                document.getElementById('love-overlay').style.display = 'flex';
+            }, 1000);
+        }
+
+        function closeOverlay() {
+            document.getElementById('love-overlay').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
